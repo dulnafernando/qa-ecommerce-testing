@@ -1,0 +1,32 @@
+[
+  {
+    "case": "valid_login",
+    "email": "tharindifernandi@gmail.com",
+    "password": "Ay@6ee2iDivYXms",
+    "expected": "success"
+  },
+  {
+    "case": "invalid_email",
+    "email": "notarealuser99999@example.com",
+    "password": "Ay@6ee2iDivYXms",
+    "expected": "failure"
+  },
+  {
+    "case": "invalid_password",
+    "email": "tharindifernandi@gmail.com",
+    "password": "WrongPassword123",
+    "expected": "failure"
+  },
+  {
+    "case": "empty_email",
+    "email": "",
+    "password": "Ay@6ee2iDivYXms",
+    "expected": "failure"
+  },
+  {
+    "case": "empty_password",
+    "email": "tharindifernandi@gmail.com",
+    "password": "",
+    "expected": "failure"
+  }
+]

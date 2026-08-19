@@ -30,3 +30,6 @@ class LoginPage:
         self.enter_email(email)
         self.enter_password(password)
         self.click_login()
+
+    def is_logged_in(self) -> bool:
+        return self.page.locator("text=Logged in as").is_visible()
