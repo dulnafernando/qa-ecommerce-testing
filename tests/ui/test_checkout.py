@@ -24,6 +24,10 @@ def _login_and_add_product(page: Page, product_name: str = PRODUCT_NAME):
     login_page.login(VALID_USER["email"], VALID_USER["password"])
     assert login_page.is_logged_in(), "Precondition failed: Login must succeed before checkout."
 
+    # Clear shared account-level cart to guarantee isolated test starting state
+    cart_page = CartPage(page)
+    cart_page.clear_cart()
+
     products_page = ProductsPage(page)
     products_page.goto()
     products_page.add_product_to_cart_by_name(product_name)

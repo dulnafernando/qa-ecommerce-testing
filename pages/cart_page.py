@@ -40,3 +40,12 @@ class CartPage:
         """Clicks the Proceed To Checkout button."""
         self.page.locator(".check_out").click()
 
+    def clear_cart(self):
+        """Removes every item currently in the cart."""
+        if not self.page.url.endswith("/view_cart"):
+            self.goto()
+        delete_buttons = self.page.locator(".cart_delete a")
+        while delete_buttons.count() > 0:
+            delete_buttons.first.click()
+            self.page.wait_for_timeout(500)  # brief pause for the row to actually remove
+
