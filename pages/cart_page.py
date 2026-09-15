@@ -35,3 +35,8 @@ class CartPage:
         row = self._get_product_row(product_name)
         row.locator(".cart_delete a").click()
         row.wait_for(state="detached")
+
+    def proceed_to_checkout(self):
+        """Clicks the Proceed To Checkout button."""
+        self.page.locator(".check_out").click()
+

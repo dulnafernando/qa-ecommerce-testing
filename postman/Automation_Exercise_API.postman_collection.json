@@ -1,0 +1,474 @@
+{
+  "info": {
+    "_postman_id": "9b3c4d7e-2a1f-4c8e-89a1-7c9b0e123456",
+    "name": "Automation Exercise REST API",
+    "description": "Comprehensive API test suite for https://automationexercise.com/api covering Products, Search, and User Authentication with positive and negative test cases.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Products & Catalog",
+      "description": "Endpoints related to product browsing, brands, and search.",
+      "item": [
+        {
+          "name": "GET All Products List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/productsList",
+              "host": ["{{baseUrl}}"],
+              "path": ["productsList"]
+            },
+            "description": "Retrieve all available products. Validates response code 200 and product list schema."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response time is acceptable (< 3000ms)\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "});",
+                  "",
+                  "pm.test(\"Payload responseCode is 200\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.responseCode).to.eql(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Products array is returned and non-empty\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.products).to.be.an(\"array\").that.is.not.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"Product schema contains expected fields\", function () {",
+                  "    var firstProduct = pm.response.json().products[0];",
+                  "    pm.expect(firstProduct).to.have.property(\"id\");",
+                  "    pm.expect(firstProduct).to.have.property(\"name\");",
+                  "    pm.expect(firstProduct).to.have.property(\"price\");",
+                  "    pm.expect(firstProduct).to.have.property(\"brand\");",
+                  "    pm.expect(firstProduct).to.have.property(\"category\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST All Products List (Unsupported Method)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/productsList",
+              "host": ["{{baseUrl}}"],
+              "path": ["productsList"]
+            },
+            "description": "Negative Test: Calling POST on /productsList is not allowed. Validates 405 error payload."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Transport status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Payload responseCode is 405 Method Not Allowed\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.responseCode).to.eql(405);",
+                  "});",
+                  "",
+                  "pm.test(\"Message indicates request method is not supported\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.eql(\"This request method is not supported.\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET All Brands List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/brandsList",
+              "host": ["{{baseUrl}}"],
+              "path": ["brandsList"]
+            },
+            "description": "Retrieve all brands. Validates response code 200 and non-empty brand list."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Payload responseCode is 200\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.responseCode).to.eql(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Brands array is non-empty with id and brand properties\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.brands).to.be.an(\"array\").that.is.not.empty;",
+                  "    pm.expect(jsonData.brands[0]).to.have.property(\"id\");",
+                  "    pm.expect(jsonData.brands[0]).to.have.property(\"brand\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST Search Product (Valid Term)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "search_product",
+                  "value": "top",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/searchProduct",
+              "host": ["{{baseUrl}}"],
+              "path": ["searchProduct"]
+            },
+            "description": "Search for products by query term. Validates filtered results matching term."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Payload responseCode is 200\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.responseCode).to.eql(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Search returns matching products\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.products).to.be.an(\"array\").that.is.not.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST Search Product Without Parameter",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/searchProduct",
+              "host": ["{{baseUrl}}"],
+              "path": ["searchProduct"]
+            },
+            "description": "Negative Test: Calling searchProduct without parameter. Validates 400 Bad Request payload."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Transport status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Payload responseCode is 400 Bad Request\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.responseCode).to.eql(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message specifies missing parameter\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include(\"search_product parameter is missing\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Authentication & Accounts",
+      "description": "Endpoints related to login verification and user profile inspection.",
+      "item": [
+        {
+          "name": "POST Verify Login (Valid Credentials)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{validEmail}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{validPassword}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/verifyLogin",
+              "host": ["{{baseUrl}}"],
+              "path": ["verifyLogin"]
+            },
+            "description": "Positive login verification. Validates user exists confirmation."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Payload responseCode is 200\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.responseCode).to.eql(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Message confirms User exists!\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.eql(\"User exists!\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST Verify Login (Invalid Credentials)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "invalid_user_99999@example.com",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "WrongPassword123",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/verifyLogin",
+              "host": ["{{baseUrl}}"],
+              "path": ["verifyLogin"]
+            },
+            "description": "Negative Test: Verify login with non-existent user. Validates 404 User not found payload."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Transport status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Payload responseCode is 404 Not Found\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.responseCode).to.eql(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Message confirms User not found!\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.eql(\"User not found!\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST Verify Login (Missing Email)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "password",
+                  "value": "{{validPassword}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/verifyLogin",
+              "host": ["{{baseUrl}}"],
+              "path": ["verifyLogin"]
+            },
+            "description": "Negative Test: Verify login without email. Validates 400 Bad Request payload."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Transport status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Payload responseCode is 400 Bad Request\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.responseCode).to.eql(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Message indicates missing parameter\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include(\"parameter is missing\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE Verify Login (Unsupported Method)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/verifyLogin",
+              "host": ["{{baseUrl}}"],
+              "path": ["verifyLogin"]
+            },
+            "description": "Negative Test: DELETE method on verifyLogin is unsupported. Validates 405 Method Not Allowed."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Transport status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Payload responseCode is 405 Method Not Allowed\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.responseCode).to.eql(405);",
+                  "});",
+                  "",
+                  "pm.test(\"Message indicates unsupported method\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.eql(\"This request method is not supported.\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET User Detail By Email",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/getUserDetailByEmail?email={{validEmail}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["getUserDetailByEmail"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "{{validEmail}}"
+                }
+              ]
+            },
+            "description": "Retrieve user profile details by query parameter. Validates user object fields."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Payload responseCode is 200\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.responseCode).to.eql(200);",
+                  "});",
+                  "",
+                  "pm.test(\"User object contains registered email\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.user).to.be.an(\"object\");",
+                  "    pm.expect(jsonData.user.email).to.eql(pm.environment.get(\"validEmail\"));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
