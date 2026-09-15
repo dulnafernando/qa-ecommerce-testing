@@ -34,11 +34,11 @@ jobs:
 
       - name: Run REST API Tests
         run: |
-          pytest -v tests/api/ -m api
+          pytest -v tests/api/
 
       - name: Run UI End-to-End Tests
         run: |
-          pytest -v tests/ui/ -m ui
+          pytest -v tests/ui/
 
       - name: Upload HTML Test Report
         if: always()
