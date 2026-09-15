@@ -46,6 +46,10 @@ class CartPage:
             self.goto()
         delete_buttons = self.page.locator(".cart_delete a")
         while delete_buttons.count() > 0:
+            row = delete_buttons.first.locator("xpath=./ancestor::tr")
             delete_buttons.first.click()
-            self.page.wait_for_timeout(500)  # brief pause for the row to actually remove
+            try:
+                row.wait_for(state="detached", timeout=5000)
+            except Exception:
+                self.page.wait_for_timeout(500)
 

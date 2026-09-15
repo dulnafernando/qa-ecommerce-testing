@@ -69,4 +69,4 @@ class CheckoutPage:
     def click_place_order(self):
         """Clicks the Place Order button and waits for the payment page to load."""
         self.place_order_button.click()
-        self.page.wait_for_url("**/payment", timeout=15000)
+        self.page.wait_for_url("**/payment", wait_until="domcontentloaded", timeout=15000)

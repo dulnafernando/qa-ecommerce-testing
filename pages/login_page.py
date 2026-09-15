@@ -32,4 +32,8 @@ class LoginPage:
         self.click_login()
 
     def is_logged_in(self) -> bool:
-        return self.page.locator("text=Logged in as").is_visible()
+        try:
+            self.page.locator("text=Logged in as").wait_for(state="visible", timeout=5000)
+            return True
+        except Exception:
+            return False
